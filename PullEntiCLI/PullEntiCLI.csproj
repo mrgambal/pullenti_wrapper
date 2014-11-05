@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{98FA465B-EA1E-4863-A477-ED8C42EBFD5C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>PullEntiCLI</RootNamespace>
+    <AssemblyName>PullEntiCLI</AssemblyName>
+    <StartupObject>PullEntiCLI.MainClass</StartupObject>
+    <CodePage>65001</CodePage>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <NoWin32Manifest>False</NoWin32Manifest>
+    <SignAssembly>False</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+    <NoStdLib>False</NoStdLib>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <RunCodeAnalysis>False</RunCodeAnalysis>
+    <SourceAnalysisOverrideSettingsFile>C:\Users\tenshi\AppData\Roaming\ICSharpCode\SharpDevelop5\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <Externalconsole>true</Externalconsole>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <BaseAddress>4194304</BaseAddress>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <FileAlignment>4096</FileAlignment>
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Externalconsole>true</Externalconsole>
+    <BaseAddress>4194304</BaseAddress>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <BaseAddress>4194304</BaseAddress>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+    <FileAlignment>4096</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
+    <StartAction>Project</StartAction>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="EP.Analyzer.Location">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Location.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Misc">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Misc.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Organization">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Organization.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Person">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Person.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Date">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Date.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Technical">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Technical.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Biblio">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Biblio.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Decree">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Decree.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Sdk">
+      <HintPath>..\EP.Sdk\EP.Sdk.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Analyzer.Event">
+      <HintPath>..\EP.Sdk\EP.Analyzer.Event.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net35\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Core">
+      <HintPath>..\EP.Sdk\EP.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Morphology">
+      <HintPath>..\EP.Sdk\EP.Morphology.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Utils">
+      <HintPath>..\EP.Sdk\EP.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="EP.Explanatory">
+      <HintPath>..\EP.Sdk\EP.Explanatory.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Structures.cs" />
+    <Compile Include="Worker.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
