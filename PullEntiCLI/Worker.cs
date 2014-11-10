@@ -20,7 +20,7 @@ namespace PullEntiCLI
         /// </summary>
         public Worker()
         {
-            processor = new Processor();
+            processor = new Processor("FACT");
         }
 
         /// <summary>
@@ -55,6 +55,9 @@ namespace PullEntiCLI
 
             foreach (Referent entity in result.Entities)
             {
+                if (!(entity is FactReferent))
+                    continue;
+
                 e = new Entity
                 {
                     Name = entity.ToString(),

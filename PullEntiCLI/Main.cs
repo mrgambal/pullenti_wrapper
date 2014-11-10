@@ -99,8 +99,7 @@ namespace PullEntiCLI
         private static Worker GetWorker(int key)
         {
             if (!workers.ContainsKey(key))
-                lock (workers)
-                    workers[key] = new Worker();
+                workers[key] = new Worker();
 
             return workers[key];
         }
