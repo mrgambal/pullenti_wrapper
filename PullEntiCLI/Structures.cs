@@ -20,13 +20,19 @@ namespace PullEntiCLI
         public string Name { get; set; }
         public string Type { get; set; }
         public IList<Occurence> Occurences { get; set; }
-        public IList<string> Slots { get; set; }
-        public IList<string> Refs { get; set; }
+        public IList<KeyValuePair<string, string>> Slots { get; set; }
     }
 
     public struct Payload
     {
         public int Counter { get; set; }
         public string Line { get; set; }
+    }
+
+    public struct Result
+    {
+        public string Title { get; set; }
+        public string Text { get; set; }
+        public IList<Entity> Structure { get; set; }
     }
 }

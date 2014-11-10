@@ -44,36 +44,38 @@ namespace PullEntiCLI
         /// Processes the article.
         /// </summary>
         /// <returns>Combined data for the article. Contains the article, 
-        /// title of it and graph of parsed entities in JSON.
+        /// title of it and list of parsed entities.
         /// </returns>
         /// <param name="article">Article.</param>
-        public IDictionary<String, String> ProcessArticle(Item article)
+        public Result ProcessArticle(Item article)
         {
             var entities = new List<Entity>();
-            Entity e;
             AnalysisResult result = processor.Process(new SourceOfAnalysis(article.Content), null, MorphLang.UA);
 
             foreach (Referent entity in result.Entities)
-            {
-                e = new Entity
-                {
-                    Name = entity.ToString(),
-                    Refs = new List<String>(),
-                    Slots = (
-                        from slot in entity.Slots
-                        where !slot.IsInternal && !(slot.Value is Referent)
-                        select slot.ToString()).ToList(),
-                    Type = entity.InstanceOf.Caption,
-                    Occurences = GatherOccurences(entity.Occurrence)
-                };
-                entities.Add(e);
-            }
+                entities.Add(CreateEntity(entity));
 
-            return new Dictionary<String, String> {
-				{ "title", article.Title },
-				{ "text", article.Content },
-				{ "structure", JsonConvert.SerializeObject(entities) }
-			};
+            return new Result()
+            {
+                Title = article.Title,
+                Text = article.Content,
+                Structure = entities
+            };
+        }
+
+        private Entity CreateEntity(Referent entity)
+        {
+            return new Entity
+            {
+                Name = entity.ToString(),
+                Slots = (
+                    from slot in entity.Slots
+                    where !(slot.IsInternal || slot.Value is Referent)
+                    select new KeyValuePair<string, string>(slot.TypeName, slot.Value.ToString())
+                    ).ToList(),
+                Type = entity.InstanceOf.Caption,
+                Occurences = GatherOccurences(entity.Occurrence)
+            };
         }
 
         #region IDispposable
@@ -103,4 +105,3 @@ namespace PullEntiCLI
         #endregion
     }
 }
-

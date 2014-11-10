@@ -16,8 +16,7 @@ namespace PullEntiCLI
 
         public static void Main(string[] args)
         {
-            //Console.OutputEncoding = Encoding.Unicode;
-            ProcessorService.Initialize(true, MorphLang.UA | MorphLang.RU | MorphLang.EN);
+            ProcessorService.Initialize(true, MorphLang.UA);
 
             var input = args[0];
 
@@ -92,24 +91,24 @@ namespace PullEntiCLI
         }
 
         /// <summary>
-        /// Static pool (do not repeat this).
+        /// Static workers pool.
         /// </summary>
-        /// <returns>The worker.</returns>
+        /// <returns>Worker instance.</returns>
         /// <param name="key">Thread hash-code</param>
         private static Worker GetWorker(int key)
         {
             if (!workers.ContainsKey(key))
-                lock (workers)
+                lock(workers)
                     workers[key] = new Worker();
 
             return workers[key];
         }
 
         /// <summary>
-        /// Fills and returns array of events
+        /// Fills in and returns array of events
         /// </summary>
-        /// <param name="quantity"></param>
-        /// <returns></returns>
+        /// <param name="quantity">Array-size. Should be equal to your MaxThreads</param>
+        /// <returns>Array of ManualResetEvents</returns>
         private static ManualResetEvent[] GetResetEvents(int quantity)
         {
             var resetEvents = new ManualResetEvent[quantity];
