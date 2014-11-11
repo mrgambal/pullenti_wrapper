@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace PullEntiCLI
 {
@@ -31,8 +32,11 @@ namespace PullEntiCLI
 
     public struct Result
     {
+        [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
+        [JsonProperty(PropertyName = "text")]
         public string Text { get; set; }
+        [JsonProperty(PropertyName = "structure")]
         public IList<Entity> Structure { get; set; }
     }
 }
