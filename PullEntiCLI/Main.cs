@@ -30,7 +30,7 @@ namespace PullEntiCLI
             }
 
             var output = Path.GetDirectoryName(input);
-
+            // TODO: rewrite using Task.Facroty
             RunParallel(input: input, outputBase: output);
         }
 

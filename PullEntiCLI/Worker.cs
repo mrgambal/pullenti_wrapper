@@ -67,6 +67,7 @@ namespace PullEntiCLI
         {
             return new Entity
             {
+                Id = entity.GetHashCode(),
                 Name = entity.ToString(),
                 Slots = (
                     from slot in entity.Slots
@@ -74,7 +75,12 @@ namespace PullEntiCLI
                     select new KeyValuePair<string, string>(slot.TypeName, slot.Value.ToString())
                     ).ToList(),
                 Type = entity.InstanceOf.Caption,
-                Occurences = GatherOccurences(entity.Occurrence)
+                Occurences = GatherOccurences(entity.Occurrence),
+                Refs = (
+                    from slot in entity.Slots
+                    where slot.Value is Referent
+                    select ((Referent)slot.Value).GetHashCode()
+                ).ToList()
             };
         }
 
