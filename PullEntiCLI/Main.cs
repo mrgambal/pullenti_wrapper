@@ -2,20 +2,23 @@ using EP;
 using EP.Text;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PullEntiCLI
 {
-
     public static class MainClass
     {
+        private static object _syncRoot = new object();
         private static Dictionary<int, Worker> workers = new Dictionary<int, Worker>();
 
         public static void Main(string[] args)
         {
+            Console.Clear();
             ProcessorService.Initialize(true, MorphLang.UA);
 
             var input = args[0];
@@ -30,8 +33,8 @@ namespace PullEntiCLI
             }
 
             var output = Path.GetDirectoryName(input);
-            // TODO: rewrite using Task.Facroty
-            RunParallel(input: input, outputBase: output);
+
+            Run(input: input, outputBase: output);
         }
 
         /// <summary>
@@ -41,82 +44,66 @@ namespace PullEntiCLI
         /// </summary>
         /// <param name="input">Input file.</param>
         /// <param name="outputBase">Output directory name.</param>
-        private static void RunParallel(String input, String outputBase = "")
+        private static void Run(String input, String outputBase = "")
         {
-            string line;
-            var counter = 0;
-            var sum = 0;
-            var maxThreads = Environment.ProcessorCount;
-            var resetEvents = GetResetEvents(maxThreads);
+            var _coll = new BlockingCollection<string>();
+            var tasks = new List<Task<Task>>();
+            var startPos = 0;
+            var taskStartPos = 1;
 
-            ThreadPool.SetMaxThreads(maxThreads, maxThreads);
-
-            using (var file = new StreamReader(input, Encoding.UTF8))
+            Task.Factory.StartNew(() =>
             {
-                while (!file.EndOfStream)
+                using (var file = new StreamReader(input, Encoding.UTF8))
                 {
-                    line = file.ReadLine();
-                    resetEvents[counter].Reset();
+                    WriteConsole("Started reading", startPos);
 
-                    ThreadPool.QueueUserWorkItem(state =>
-                    {
-                        var worker = GetWorker(Thread.CurrentThread.GetHashCode());
-                        var payload = (Payload)state;
-                        var item = JsonConvert.DeserializeObject<Item>(payload.Line);
-                        var output = outputBase
-                                     + Path.DirectorySeparatorChar
-                                     + payload.Counter
-                                     + ".json";
+                    while (!file.EndOfStream)
+                        _coll.Add(file.ReadLine());
 
-                        using (var outer = new StreamWriter(path: output, append: true))
+                    _coll.CompleteAdding();
+                }
+            });
+
+            for (int i = 1; i < Environment.ProcessorCount + 1; i++)
+            {
+                var id = i;
+
+                tasks.Add(Task.Factory.StartNew(async () =>
+                {
+                    var cnt = 0;
+                    var worker = new Worker();
+                    var output = outputBase + Path.DirectorySeparatorChar + id + ".json";
+
+                    using (var outer = new StreamWriter(path: output, append: true))
+                        foreach (var line in _coll.GetConsumingEnumerable())
+                        {
+                            var item = JsonConvert.DeserializeObject<Item>(line);
                             outer.WriteLine(JsonConvert.SerializeObject(worker.ProcessArticle(item)));
 
-                        resetEvents[payload.Counter].Set();
-                    }, new Payload { Counter = counter, Line = line });
-
-                    if (counter == maxThreads - 1 || file.EndOfStream)
-                    {
-                        WaitHandle.WaitAll(resetEvents);
-                        sum += maxThreads;
-
-                        if (sum % 1000 == 0)
-                            Console.WriteLine("I've read " + sum + " articles, sir!");
-                    }
-
-                    counter = (counter + 1) % maxThreads;
-                }
+                            WriteConsole(string.Format("Task {0}: {1,6}", id, ++cnt), id + taskStartPos);
+                        }
+                }));
             }
 
-            Console.WriteLine("Oi, oi, captain! There were " + sum + " fecking articles");
+            Task.WaitAll(tasks.ToArray());
+
+            Console.Clear();
+            Console.WriteLine("Done");
         }
 
         /// <summary>
-        /// Static workers pool.
+        /// Synchronised console output
         /// </summary>
-        /// <returns>Worker instance.</returns>
-        /// <param name="key">Thread hash-code</param>
-        private static Worker GetWorker(int key)
+        /// <param name="msg">Message</param>
+        /// <param name="top">Offset from the top in lines</param>
+        public static void WriteConsole(string msg, int top)
         {
-            if (!workers.ContainsKey(key))
-                lock(workers)
-                    workers[key] = new Worker();
-
-            return workers[key];
-        }
-
-        /// <summary>
-        /// Fills in and returns array of events
-        /// </summary>
-        /// <param name="quantity">Array-size. Should be equal to your MaxThreads</param>
-        /// <returns>Array of ManualResetEvents</returns>
-        private static ManualResetEvent[] GetResetEvents(int quantity)
-        {
-            var resetEvents = new ManualResetEvent[quantity];
-
-            for (var i = 0; i < quantity; i++)
-                resetEvents[i] = new ManualResetEvent(false);
-
-            return resetEvents;
+            lock (_syncRoot)
+            {
+                Console.SetCursorPosition(0, top);
+                Console.WriteLine(msg);
+                Console.SetCursorPosition(0, 0);
+            }
         }
     }
 }

@@ -36,12 +36,6 @@ namespace PullEntiCLI
         public int Id { get; set; }
     }
 
-    public struct Payload
-    {
-        public int Counter { get; set; }
-        public string Line { get; set; }
-    }
-
     public struct Result
     {
         [JsonProperty(PropertyName = "title")]
